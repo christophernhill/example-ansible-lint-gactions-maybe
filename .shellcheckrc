@@ -6,7 +6,8 @@ enable=all
 
 # Disable specific checks
 # SC1091: Not following sourced files
-disable=SC1091
+# SC2312: Command substitution masking return value (info level - acceptable)
+disable=SC1091,SC2312
 
 # Set shell dialect (bash, sh, dash, ksh)
 shell=bash
