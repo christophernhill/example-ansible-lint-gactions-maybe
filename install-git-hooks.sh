@@ -16,7 +16,7 @@ echo -e "${BLUE}========================================${NC}"
 echo ""
 
 # Check if we're in a git repository
-if [ ! -d ".git" ]; then
+if [[ ! -d ".git" ]]; then
     echo -e "${YELLOW}Error: Not in a git repository root directory${NC}"
     echo "Please run this script from the repository root"
     exit 1
@@ -26,7 +26,7 @@ fi
 mkdir -p .git/hooks
 
 # Copy pre-commit hook
-if [ -f "pre-commit" ]; then
+if [[ -f "pre-commit" ]]; then
     echo "Installing pre-commit hook..."
     cp pre-commit .git/hooks/pre-commit
     chmod +x .git/hooks/pre-commit
