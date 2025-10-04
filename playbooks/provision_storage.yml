@@ -1,4 +1,3 @@
-
 ---
 - name: Provision Storage Servers
   hosts: storage_servers
