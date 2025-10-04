@@ -84,6 +84,12 @@ This repository contains Ansible playbooks, roles, and scripts for managing a su
    ansible all -m ping -i inventory/hosts.ini
    ```
 
+6. **Install Git hooks (optional but recommended):**
+   ```bash
+   ./install-git-hooks.sh
+   ```
+   This installs a pre-commit hook that runs linting checks locally before each commit.
+
 ## 📋 Usage
 
 ### Running Playbooks
@@ -128,6 +134,23 @@ ansible-playbook -i inventory/hosts.ini playbooks/provision_storage.yml --check
 ## 🔍 Linting and Quality Checks
 
 This repository includes comprehensive linting to ensure code quality:
+
+### Local Pre-Commit Hooks
+
+Install Git hooks to run linting checks automatically before each commit:
+
+```bash
+./install-git-hooks.sh
+```
+
+The pre-commit hook checks:
+- ✅ YAML syntax and formatting (yamllint)
+- ✅ Ansible best practices (ansible-lint)  
+- ✅ Shell script errors (shellcheck)
+- ✅ Playbook syntax validation
+- ✅ Potential secrets in code
+
+See [GIT_HOOKS.md](GIT_HOOKS.md) for details.
 
 ### Manual Linting
 
