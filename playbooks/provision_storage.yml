@@ -1,3 +1,4 @@
+
 ---
 - name: Provision Storage Servers
   hosts: storage_servers
@@ -46,4 +47,3 @@
         minute: "*/15"
         job: "/usr/local/bin/storage_monitor.sh"
         user: root
-

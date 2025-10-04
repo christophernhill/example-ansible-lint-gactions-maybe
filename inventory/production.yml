@@ -28,4 +28,3 @@ all:
     ansible_become: true
     ansible_become_method: sudo
     environment: production
-

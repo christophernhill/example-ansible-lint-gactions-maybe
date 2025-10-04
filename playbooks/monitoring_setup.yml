@@ -1,3 +1,4 @@
+
 ---
 - name: Setup Monitoring Infrastructure
   hosts: monitoring_servers
@@ -49,4 +50,3 @@
       ansible.builtin.systemd:
         name: prometheus
         state: restarted
-
