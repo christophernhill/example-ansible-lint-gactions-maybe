@@ -12,7 +12,11 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        ansible_version: ['2.14', '2.15', '2.16']
+        # Using ansible package versions (not ansible-core versions)
+        # ansible 7.x = ansible-core 2.14
+        # ansible 8.x = ansible-core 2.15
+        # ansible 9.x = ansible-core 2.16
+        ansible_version: ['7', '8', '9']
 
     steps:
     - name: Checkout code
@@ -23,9 +27,9 @@ jobs:
       with:
         python-version: '3.11'
 
-    - name: Install Ansible ${{ matrix.ansible_version }}
+    - name: Install Ansible ${{ matrix.ansible_version }}.x
       run: |
-        pip install "ansible==${{ matrix.ansible_version }}"
+        pip install "ansible~=${{ matrix.ansible_version }}.0"
 
     - name: Install molecule (for testing Ansible roles)
       run: |
