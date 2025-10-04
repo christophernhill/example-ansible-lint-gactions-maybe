@@ -1,0 +1,58 @@
+name: Security Scan
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+  schedule:
+    - cron: '0 6 * * 1'  # Weekly on Mondays at 6 AM UTC
+
+jobs:
+  security:
+    name: Security Checks
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+
+    - name: Install safety (Python dependency checker)
+      run: |
+        pip install safety
+
+    - name: Install bandit (Python security linter)
+      run: |
+        pip install bandit
+
+    - name: Install checkov (Infrastructure as Code security scanner)
+      run: |
+        pip install checkov
+
+    - name: Check Python dependencies for vulnerabilities
+      run: |
+        if [ -f "requirements.txt" ]; then
+          safety check --file requirements.txt
+        fi
+      continue-on-error: true
+
+    - name: Run bandit security linting
+      run: |
+        find . -name "*.py" | xargs bandit -r
+      continue-on-error: true
+
+    - name: Run checkov on Infrastructure as Code
+      run: |
+        checkov -f . --framework ansible
+      continue-on-error: true
+
+    - name: Check for secrets in code
+      run: |
+        echo "Checking for potential secrets..."
+        find . -type f -name "*.yml" -o -name "*.yaml" -o -name "*.sh" -o -name "*.py" | xargs grep -l "password\|secret\|key\|token" || true
+

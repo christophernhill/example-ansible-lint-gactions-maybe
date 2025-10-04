@@ -1,0 +1,31 @@
+---
+all:
+  children:
+    storage_servers:
+      hosts:
+        storage-prod-01.example.com:
+          ansible_host: 10.10.1.10
+          storage_role: primary
+          storage_capacity: 10TB
+        storage-prod-02.example.com:
+          ansible_host: 10.10.1.11
+          storage_role: replica
+          storage_capacity: 10TB
+        storage-prod-03.example.com:
+          ansible_host: 10.10.1.12
+          storage_role: replica
+          storage_capacity: 10TB
+    monitoring_servers:
+      hosts:
+        monitor-prod-01.example.com:
+          ansible_host: 10.10.2.10
+    alerting_servers:
+      hosts:
+        alert-prod-01.example.com:
+          ansible_host: 10.10.3.10
+  vars:
+    ansible_user: ansible
+    ansible_become: true
+    ansible_become_method: sudo
+    environment: production
+

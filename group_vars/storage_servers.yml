@@ -1,0 +1,16 @@
+---
+# Variables specific to storage servers
+
+storage_mount_point: /mnt/storage
+storage_filesystem: ext4
+storage_backup_enabled: true
+storage_backup_schedule: '0 2 * * *'
+
+# Storage monitoring thresholds
+storage_warning_threshold: 80
+storage_critical_threshold: 90
+
+# Storage replication settings
+replication_enabled: true
+replication_target: storage-replica.example.com
+

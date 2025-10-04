@@ -1,0 +1,49 @@
+---
+- name: Provision Storage Servers
+  hosts: storage_servers
+  become: true
+  gather_facts: true
+
+  tasks:
+    - name: Update apt cache
+      ansible.builtin.apt:
+        update_cache: true
+        cache_valid_time: 3600
+      when: ansible_os_family == "Debian"
+
+    - name: Install required packages
+      ansible.builtin.package:
+        name: "{{ common_packages }}"
+        state: present
+
+    - name: Create storage directory
+      ansible.builtin.file:
+        path: "{{ storage_mount_point }}"
+        state: directory
+        mode: '0755'
+        owner: root
+        group: root
+
+    - name: Check if storage is already mounted
+      ansible.builtin.command: mountpoint -q {{ storage_mount_point }}
+      register: mount_check
+      failed_when: false
+      changed_when: false
+
+    - name: Display mount status
+      ansible.builtin.debug:
+        msg: "Storage mount point status: {{ 'mounted' if mount_check.rc == 0 else 'not mounted' }}"
+
+    - name: Configure storage monitoring
+      ansible.builtin.template:
+        src: templates/storage_monitor.sh.j2
+        dest: /usr/local/bin/storage_monitor.sh
+        mode: '0755'
+
+    - name: Set up cron job for storage monitoring
+      ansible.builtin.cron:
+        name: "Storage capacity monitoring"
+        minute: "*/15"
+        job: "/usr/local/bin/storage_monitor.sh"
+        user: root
+

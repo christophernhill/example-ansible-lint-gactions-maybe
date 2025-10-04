@@ -1,0 +1,21 @@
+---
+# ansible-lint configuration file
+
+exclude_paths:
+  - .cache/
+  - .github/
+  - test_inventory/
+  - venv/
+  - .venv/
+
+loop_var_prefix: "{role}_"
+
+var_naming_pattern: "^[a-z_][a-z0-9_]*$"
+
+skip_list: []
+
+enable_list:
+  - no-log-password
+  - no-same-owner
+
+offline: false

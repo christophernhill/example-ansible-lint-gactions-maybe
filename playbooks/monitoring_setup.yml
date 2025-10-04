@@ -1,0 +1,52 @@
+---
+- name: Setup Monitoring Infrastructure
+  hosts: monitoring_servers
+  become: true
+  gather_facts: true
+
+  vars:
+    monitoring_port: 9090
+    monitoring_user: monitoring
+    alert_email: alerts@example.com
+
+  tasks:
+    - name: Create monitoring user
+      ansible.builtin.user:
+        name: "{{ monitoring_user }}"
+        state: present
+        shell: /bin/bash
+        create_home: true
+
+    - name: Install monitoring packages
+      ansible.builtin.package:
+        name:
+          - prometheus
+          - grafana
+          - alertmanager
+        state: present
+
+    - name: Configure Prometheus
+      ansible.builtin.template:
+        src: templates/prometheus.yml.j2
+        dest: /etc/prometheus/prometheus.yml
+        mode: '0644'
+        owner: "{{ monitoring_user }}"
+        group: "{{ monitoring_user }}"
+      notify: Restart Prometheus
+
+    - name: Start and enable monitoring services
+      ansible.builtin.systemd:
+        name: "{{ item }}"
+        state: started
+        enabled: true
+      loop:
+        - prometheus
+        - grafana-server
+        - alertmanager
+
+  handlers:
+    - name: Restart Prometheus
+      ansible.builtin.systemd:
+        name: prometheus
+        state: restarted
+

@@ -1,0 +1,29 @@
+---
+# Global variables for all servers
+
+# SSH and connection settings
+ansible_ssh_common_args: '-o StrictHostKeyChecking=no'
+
+# Timezone
+timezone: 'UTC'
+
+# NTP servers
+ntp_servers:
+  - 0.pool.ntp.org
+  - 1.pool.ntp.org
+
+# DNS servers
+dns_servers:
+  - 8.8.8.8
+  - 8.8.4.4
+
+# Common packages to install
+common_packages:
+  - vim
+  - htop
+  - curl
+  - wget
+  - net-tools
+  - python3
+  - python3-pip
+

@@ -1,0 +1,21 @@
+# Python dependencies for Ansible and linting tools
+
+# Ansible
+ansible>=2.14,<2.17
+ansible-core>=2.14,<2.17
+
+# Linting tools
+ansible-lint>=6.0.0
+yamllint>=1.26.0
+
+# Security scanning
+bandit>=1.7.0
+safety>=2.0.0
+
+# Infrastructure as Code security
+checkov>=2.3.0
+
+# Testing
+molecule>=5.0.0
+molecule-docker>=2.0.0
+

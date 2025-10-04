@@ -1,0 +1,76 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  lint:
+    name: Lint Code
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+
+    - name: Install Ansible
+      run: |
+        pip install ansible
+
+    - name: Install ansible-lint
+      run: |
+        pip install ansible-lint
+
+    - name: Install yamllint
+      run: |
+        pip install yamllint
+
+    - name: Install shellcheck
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y shellcheck
+
+    - name: Lint Ansible files
+      run: |
+        find . -name "*.yml" -o -name "*.yaml" | grep -E "(playbooks|roles|inventory)" | xargs ansible-lint
+      continue-on-error: false
+
+    - name: Lint YAML files
+      run: |
+        find . -name "*.yml" -o -name "*.yaml" | xargs yamllint
+      continue-on-error: false
+
+    - name: Lint shell scripts
+      run: |
+        find . -name "*.sh" | xargs shellcheck
+      continue-on-error: false
+
+    - name: Check Ansible playbook syntax
+      run: |
+        find . -name "*.yml" -o -name "*.yaml" | grep -E "(playbooks|roles)" | while read file; do
+          if [ -f "$file" ]; then
+            echo "Checking syntax for $file"
+            ansible-playbook --syntax-check "$file"
+          fi
+        done
+      continue-on-error: false
+
+    - name: Validate inventory files
+      run: |
+        if [ -d "inventory" ]; then
+          find inventory -name "*.ini" -o -name "*.yml" -o -name "*.yaml" | while read file; do
+            if [ -f "$file" ]; then
+              echo "Validating inventory file: $file"
+              ansible-inventory -i "$file" --list
+            fi
+          done
+        fi
+      continue-on-error: false
+

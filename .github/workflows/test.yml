@@ -1,0 +1,78 @@
+name: Test Ansible
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  test-ansible:
+    name: Test Ansible Playbooks
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        ansible_version: ['2.14', '2.15', '2.16']
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+
+    - name: Install Ansible ${{ matrix.ansible_version }}
+      run: |
+        pip install "ansible==${{ matrix.ansible_version }}"
+
+    - name: Install molecule (for testing Ansible roles)
+      run: |
+        pip install molecule
+        pip install molecule-docker
+        pip install molecule-podman
+
+    - name: Create test inventory
+      run: |
+        mkdir -p test_inventory
+        cat > test_inventory/hosts.ini << EOF
+        [test_servers]
+        test-server-01 ansible_host=127.0.0.1 ansible_user=testuser ansible_ssh_pass=testpass
+
+        [monitoring_servers]
+        test-monitor-01 ansible_host=127.0.0.1 ansible_user=testuser ansible_ssh_pass=testpass
+
+        [storage_servers]
+        test-storage-01 ansible_host=127.0.0.1 ansible_user=testuser ansible_ssh_pass=testpass
+        EOF
+
+    - name: Run Ansible syntax check
+      run: |
+        find . -name "*.yml" -o -name "*.yaml" | grep -E "(playbooks|roles)" | while read file; do
+          if [ -f "$file" ]; then
+            echo "Checking syntax for $file"
+            ansible-playbook --syntax-check -i test_inventory/hosts.ini "$file"
+          fi
+        done
+
+    - name: Test Ansible playbooks (dry run)
+      run: |
+        find . -name "*.yml" -o -name "*.yaml" | grep "playbooks" | while read file; do
+          if [ -f "$file" ]; then
+            echo "Testing playbook $file (dry run)"
+            ansible-playbook --check --diff -i test_inventory/hosts.ini "$file"
+          fi
+        done
+      continue-on-error: true
+
+    - name: Validate role dependencies
+      run: |
+        find . -name "requirements.yml" | while read file; do
+          if [ -f "$file" ]; then
+            echo "Validating role requirements in $file"
+            ansible-galaxy role install -r "$file" --roles-path roles/
+          fi
+        done
+      continue-on-error: true
+

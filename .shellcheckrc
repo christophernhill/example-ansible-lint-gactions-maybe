@@ -1,0 +1,19 @@
+# shellcheck configuration file
+# https://github.com/koalaman/shellcheck/wiki/Directive
+
+# Enable all optional checks
+enable=all
+
+# Disable specific checks
+# SC1091: Not following sourced files
+disable=SC1091
+
+# Set shell dialect (bash, sh, dash, ksh)
+shell=bash
+
+# Exclude paths
+exclude=.git/*
+exclude=.cache/*
+exclude=venv/*
+exclude=.venv/*
+

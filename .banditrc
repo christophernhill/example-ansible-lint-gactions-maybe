@@ -1,0 +1,6 @@
+[bandit]
+exclude_dirs = ['/test', '/.venv', '/venv', '/.cache', '.git']
+skips = []
+tests = []
+level = low
+confidence = low

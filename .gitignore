@@ -1,0 +1,53 @@
+# Ansible
+*.retry
+ansible.log
+.ansible/
+collections/
+roles/external/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+.venv/
+ENV/
+env/
+.env
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Temporary files
+*.tmp
+*.bak
+.cache/
+tmp/
+
+# Reports
+reports/
+*.report
+
+# Test inventory
+test_inventory/
+
+# Secrets (never commit these!)
+*.pem
+*.key
+secrets.yml
+vault-password.txt
+
